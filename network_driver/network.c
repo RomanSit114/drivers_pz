@@ -1,13 +1,9 @@
-// module_init
 #include <linux/netdevice.h>
-#include <linux/skbuff.h>
 #include <linux/module.h>
 #include <linux/etherdevice.h>
-#include <linux/jiffies.h>
+#include <linux/kernel.h>
 
-MODULE_LICENSE("GPL");
-
-#define INITIAL_VALUE 10 // Пример начального значения для поля some_field
+#define INITIAL_VALUE 10 // Начальное значение для поля some_field
 
 typedef struct { 
    int some_field;
@@ -18,12 +14,12 @@ struct net_device *netdev;
 
 int my_open(struct net_device *dev) {
    /* Установка MAC-адреса устройства */
-    unsigned char mac_addr[ETH_ALEN] = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55}; // Пример MAC-адреса
-    MY_DRIVERDATA *data = netdev_priv(dev); // Получаем доступ к приватным данным устройства
+    unsigned char mac_addr[ETH_ALEN] = {0x00, 0x11, 0x22, 0x33, 0x44, 0x55}; // MAC-адрес
+    MY_DRIVERDATA *data = netdev_priv(dev); // Получение доступа к приватным данным устройства
 
     data->some_field = INITIAL_VALUE; // Инициализация полей структуры
 
-    memcpy((void *)dev->dev_addr, mac_addr, ETH_ALEN); // Копируем MAC-адрес в dev_addr
+    memcpy((void *)dev->dev_addr, mac_addr, ETH_ALEN); // Копирование MAC-адреса в dev_addr
 
     netif_start_queue(dev); // Запуск очереди устройства для передачи данных
     return 0;
@@ -37,19 +33,19 @@ int my_close(struct net_device *dev) {
 
 int my_set_mac_address(struct net_device *dev, void *addr) {
     if (!is_valid_ether_addr(addr)) {
-        return -EADDRNOTAVAIL; // Возвращаем ошибку, если MAC-адрес недопустим
+        return -EADDRNOTAVAIL; // Возвращается ошибка, если MAC-адрес недопустим
     }
 
     /* Установка нового MAC-адреса для устройства */
     memcpy((void *)dev->dev_addr, addr, ETH_ALEN);
 
-    return 0; // Успешно установили новый MAC-адрес
+    return 0;
 }
 
 
 int my_hard_start_xmit( struct sk_buff *skb, struct net_device *dev )
 {
-/* Код для инициализации передачи апаратурой */
+/* Инициализация передачи апаратурой */
 //dev->trans_start = jiffies;
 dev->stats.tx_packets += 1;
 dev->stats.tx_bytes += skb->len;
@@ -78,7 +74,6 @@ void my_rxhandler(unsigned long data) {
     dev->stats.rx_packets += 1;
     dev->stats.rx_bytes += rxbytes;
 
-    /* Далее может происходить обработка пакета или его передача вышележащим слоям */
     /* Печать информационного сообщения */
     pr_info("Received a packet! rx_packets: %lu, rx_bytes: %lu\n", dev->stats.rx_packets, dev->stats.rx_bytes);
 
@@ -126,3 +121,5 @@ static void __exit my_exit( void ) {
 
 module_init(my_init_module);
 module_exit(my_exit);
+
+MODULE_LICENSE("GPL");
