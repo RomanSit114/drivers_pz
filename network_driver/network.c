@@ -102,14 +102,6 @@ int my_init_module( void ) {
     return register_netdev(netdev);
 }
 
-
-/*static void __init init_module( void ) {
-   netdev = alloc_etherdev( sizeof( MY_DRIVERDATA ) );
-   if ( !netdev ) return -ENOMEM;
-   netdev->netdev_ops = &my_netdev_ops;
-   return register_netdev( netdev );
-}*/
-
 // module_exit
 static void __exit my_exit( void ) {
     if (netdev) {
