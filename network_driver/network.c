@@ -46,7 +46,6 @@ int my_set_mac_address(struct net_device *dev, void *addr) {
 int my_hard_start_xmit( struct sk_buff *skb, struct net_device *dev )
 {
 /* Инициализация передачи апаратурой */
-//dev->trans_start = jiffies;
 dev->stats.tx_packets += 1;
 dev->stats.tx_bytes += skb->len;
 
@@ -89,8 +88,6 @@ static const struct net_device_ops my_netdev_ops = {
 } ;
 
 int my_init_module( void ) {
-    //unsigned char new_mac_addr[ETH_ALEN] = {0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF}; // Новый MAC-адрес
-
     netdev = alloc_etherdev(sizeof(MY_DRIVERDATA));
     if (!netdev) return -ENOMEM;
 
